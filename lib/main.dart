@@ -1,6 +1,7 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 void main() {
   runApp(MyApp());
@@ -39,6 +40,35 @@ class MyAppState extends ChangeNotifier {
     } else {
       favorites.add(current);
     }
+    notifyListeners();
+  }
+
+  var noteList = <ElevatedButton>[];
+  void createNote() {
+    noteList.add(
+              ElevatedButton(
+                onPressed: () {
+                  //
+                },
+                style: 
+                  ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(20)),
+                    minimumSize: Size.zero, // Set this
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0), // Top & bottom have to be double as left and right to match, idk why
+                  ),
+                child: 
+                // MODIFY SO IT IS RESIZED ACCORDING TO DISPLAY RESOLUTION, MAYBE PUT TEXT IN A CONTAINER?
+                  AutoSizeText(
+                    'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.',
+                    //textScaler:TextScaler.linear(1),
+                    style: TextStyle(
+                      //height: 2.1,
+                    ),
+                    maxLines: 6,
+                    ),
+              )
+    ); 
+    
     notifyListeners();
   }
 }
@@ -115,43 +145,48 @@ class GeneratorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    var pair = appState.current;
 
-    IconData icon;
-    if (appState.favorites.contains(pair)) {
-      icon = Icons.favorite;
+    if (appState.noteList.isEmpty)
+    {
+      return Scaffold(
+        body: 
+          Center(
+            child: Text('No notes yet'),
+          ),
+        floatingActionButton:
+          FloatingActionButton(
+            onPressed: () {
+              appState.createNote();
+            },
+            foregroundColor: Theme.of(context).colorScheme.surface,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            child: Icon(Icons.add),
+          ),
+        );  
     } else {
-      icon = Icons.favorite_border;
-    }
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          BigCard(pair: pair),
-          SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
+      return Scaffold(
+        body:
+          GridView.count(
+            crossAxisCount: 4, // Number of notes in a row at a time
             children: [
-              ElevatedButton.icon(
-                onPressed: () {
-                  appState.toggleFavorite();
-                },
-                icon: Icon(icon),
-                label: Text('Like'),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  appState.getNext();
-                },
-                child: Text('Next'),
-              ),
+              for (var note in appState.noteList) 
+               Container(
+                padding: const EdgeInsets.all(12),
+                child: note,    
+               )
             ],
           ),
-        ],
-      ),
-    );
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            appState.createNote();
+          },
+          foregroundColor: Theme.of(context).colorScheme.surface,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          child: Icon(Icons.add),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      );
+    }
   }
 }
 
