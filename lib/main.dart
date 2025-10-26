@@ -42,33 +42,50 @@ class MyAppState extends ChangeNotifier {
     }
     notifyListeners();
   }
-
-  var noteList = <ElevatedButton>[];
+  double height = 100;
+  double width = 100;
+  var text = 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.';
+  var noteList = <AnimatedContainer>[];
   void createNote() {
     noteList.add(
-              ElevatedButton(
-                onPressed: () {
-                  //
-                },
-                style: 
-                  ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(20)),
-                    minimumSize: Size.zero, // Set this
-                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0), // Top & bottom have to be double as left and right to match, idk why
-                  ),
-                child: 
-                // MODIFY SO IT IS RESIZED ACCORDING TO DISPLAY RESOLUTION, MAYBE PUT TEXT IN A CONTAINER?
+      AnimatedContainer(
+        duration: Duration(milliseconds: 1000),
+        color: Colors.amberAccent,
+        width: width,
+        height: height,
+        child:
+          ElevatedButton(
+            onPressed: () {
+              height = 400;
+              width = 400;
+              Stack(
+                children: [
+                  noteList[0],
+                  noteList[1],
+                ],
+              );
+              notifyListeners();
+            },
+            style: 
+              ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(20)),
+                minimumSize: Size.zero, // Set this
+                padding: EdgeInsets.fromLTRB(15, 15, 15, 15), 
+              ),
+            child: 
+            // MODIFY SO IT IS RESIZED ACCORDING TO DISPLAY RESOLUTION, MAYBE PUT TEXT IN A CONTAINER?
+
                   AutoSizeText(
-                    'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.',
+                    text,
                     //textScaler:TextScaler.linear(1),
                     style: TextStyle(
                       //height: 2.1,
                     ),
-                    maxLines: 6,
-                    ),
-              )
+                    maxLines: 5,
+                  ),
+          ),
+          )
     ); 
-    
     notifyListeners();
   }
 }
@@ -146,37 +163,27 @@ class GeneratorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
-    if (appState.noteList.isEmpty)
-    {
-      return Scaffold(
-        body: 
-          Center(
-            child: Text('No notes yet'),
-          ),
-        floatingActionButton:
-          FloatingActionButton(
-            onPressed: () {
-              appState.createNote();
-            },
-            foregroundColor: Theme.of(context).colorScheme.surface,
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            child: Icon(Icons.add),
-          ),
-        );  
-    } else {
-      return Scaffold(
-        body:
-          GridView.count(
-            crossAxisCount: 4, // Number of notes in a row at a time
-            children: [
-              for (var note in appState.noteList) 
-               Container(
-                padding: const EdgeInsets.all(12),
-                child: note,    
-               )
-            ],
-          ),
-        floatingActionButton: FloatingActionButton(
+    final Widget body = appState.noteList.isNotEmpty
+    ?
+      GridView.count(
+        crossAxisCount: 4, // Number of notes in a row at a time
+        children: [
+          for (var note in appState.noteList) 
+            Container(
+            padding: const EdgeInsets.all(12),
+            child: note,    
+            )
+        ],
+      )
+    :
+      const Center(
+        child: Text('No notes yet'),
+      );
+
+    return Scaffold(
+      body: body,
+      floatingActionButton:
+        FloatingActionButton(
           onPressed: () {
             appState.createNote();
           },
@@ -184,10 +191,16 @@ class GeneratorPage extends StatelessWidget {
           backgroundColor: Theme.of(context).colorScheme.primary,
           child: Icon(Icons.add),
         ),
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      );
-    }
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+    );  
   }
+}
+
+class Note extends StatelessWidget {
+@override
+Widget build(BuildContext context) {
+  return Center(child: Text('hej'),);
+}
 }
 
 class FavoritesPage extends StatelessWidget {
