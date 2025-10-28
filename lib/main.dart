@@ -47,7 +47,7 @@ class MyAppState extends ChangeNotifier {
   var text = 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.';
   var noteList = <AnimatedContainer>[];
   void createNote() {
-    noteList.add(
+/*     noteList.add(
       AnimatedContainer(
         duration: Duration(milliseconds: 1000),
         color: Colors.amberAccent,
@@ -86,11 +86,43 @@ class MyAppState extends ChangeNotifier {
           ),
           )
     ); 
-    notifyListeners();
+    notifyListeners(); */
   }
 }
 
-// ...
+class MyNote extends StatefulWidget {
+  @override
+  State<MyNote> createState() => _MyNoteState();
+}
+
+class _MyNoteState extends State<MyNote> {
+  double w = 40;
+  double h = 40;
+  Color bg = Colors.red;
+  @override
+
+  Widget build(BuildContext context) {
+      return Scaffold(    
+        body:
+          AnimatedContainer(
+            duration: Duration(seconds: 1),
+            width: w.toDouble(),
+            height: h.toDouble(),
+            child: 
+            FloatingActionButton(
+              backgroundColor: bg,
+              onPressed: () {
+                setState(() {
+                  w = w*4;
+                  h = h*4;
+                  bg = Colors.green;
+                }); 
+              },
+            ),
+          ),
+      );
+  }
+}
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -107,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget page;
     switch (selectedIndex) {
       case 0:
-        page = GeneratorPage();
+        page = MyNote();
         break;
       case 1:
         page = FavoritesPage();
@@ -194,13 +226,6 @@ class GeneratorPage extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
     );  
   }
-}
-
-class Note extends StatelessWidget {
-@override
-Widget build(BuildContext context) {
-  return Center(child: Text('hej'),);
-}
 }
 
 class FavoritesPage extends StatelessWidget {
