@@ -1,7 +1,7 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+//import 'package:auto_size_text/auto_size_text.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
-        title: 'Namer App',
+        title: 'Notes App',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         ),
@@ -42,87 +42,86 @@ class MyAppState extends ChangeNotifier {
     }
     notifyListeners();
   }
-  double height = 100;
-  double width = 100;
-  var text = 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.';
-  var noteList = <AnimatedContainer>[];
-  void createNote() {
-/*     noteList.add(
-      AnimatedContainer(
-        duration: Duration(milliseconds: 1000),
-        color: Colors.amberAccent,
-        width: width,
-        height: height,
-        child:
-          ElevatedButton(
-            onPressed: () {
-              height = 400;
-              width = 400;
-              Stack(
-                children: [
-                  noteList[0],
-                  noteList[1],
-                ],
-              );
-              notifyListeners();
-            },
-            style: 
-              ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(20)),
-                minimumSize: Size.zero, // Set this
-                padding: EdgeInsets.fromLTRB(15, 15, 15, 15), 
-              ),
-            child: 
-            // MODIFY SO IT IS RESIZED ACCORDING TO DISPLAY RESOLUTION, MAYBE PUT TEXT IN A CONTAINER?
-
-                  AutoSizeText(
-                    text,
-                    //textScaler:TextScaler.linear(1),
-                    style: TextStyle(
-                      //height: 2.1,
-                    ),
-                    maxLines: 5,
-                  ),
-          ),
-          )
-    ); 
-    notifyListeners(); */
-  }
 }
 
 class MyNote extends StatefulWidget {
+  const MyNote({super.key});
   @override
   State<MyNote> createState() => _MyNoteState();
 }
 
-class _MyNoteState extends State<MyNote> {
-  double w = 40;
-  double h = 40;
-  Color bg = Colors.red;
-  @override
-
-  Widget build(BuildContext context) {
-      return Scaffold(    
-        body:
-          AnimatedContainer(
-            duration: Duration(seconds: 1),
-            width: w.toDouble(),
-            height: h.toDouble(),
-            child: 
-            FloatingActionButton(
-              backgroundColor: bg,
-              onPressed: () {
-                setState(() {
-                  w = w*4;
-                  h = h*4;
-                  bg = Colors.green;
-                }); 
-              },
-            ),
-          ),
-      );
+  class Note{
+    Note({ required this.width, required this.height, required this.color});
+    double width;
+    double height;
+    Color color;
   }
+
+  class _MyNoteState extends State<MyNote> {
+    var text = 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.';  
+    var noteList = <Note>[];
+
+  @override
+    Widget build(BuildContext context) {
+
+    
+void createNote() {
+  noteList.add(
+    Note(width: 75, height: 75, color: Colors.red)
+  );
 }
+
+    Widget gridBody = noteList.isNotEmpty
+        ? 
+        Stack(
+          children: [
+/*             GridView.count(
+              crossAxisCount: 4,
+              padding: EdgeInsets.all(12),
+              children: [   */                
+                for (var note in noteList) 
+                  AnimatedContainer(
+                    duration: Duration(milliseconds: 100),
+                    width: note.width,
+                    height: note.height,
+                    color: note.color,
+                    margin: EdgeInsets.all(10),
+                    child:
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            note.width *= 4;
+                            note.height *= 4;
+                            note.color = Colors.green;
+                          });
+                        },
+                        child: Text((noteList.indexOf(note).toString())),
+                      ),                  
+/*                   ),
+              ], */
+            )
+          ],
+          )
+        : const Center(child: Text('No notes yet'));
+
+
+      return Scaffold(
+        body: gridBody,
+        floatingActionButton:
+          FloatingActionButton(
+            onPressed: () {
+              setState(() {
+                createNote();
+              });
+            },
+            foregroundColor: Theme.of(context).colorScheme.surface,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            child: Icon(Icons.add),
+          ),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      );  
+    }
+  }
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -155,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               SafeArea(
                 child: NavigationRail(
-                  extended: constraints.maxWidth >= 600,
+                  extended: false,//constraints.maxWidth >= 600,
                   destinations: [
                     NavigationRailDestination(
                       icon: Icon(Icons.home),
@@ -188,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class GeneratorPage extends StatelessWidget {
+/* class GeneratorPage extends StatelessWidget {
   const GeneratorPage({super.key});
 
   @override
@@ -226,7 +225,7 @@ class GeneratorPage extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
     );  
   }
-}
+} */
 
 class FavoritesPage extends StatelessWidget {
   const FavoritesPage({super.key});
