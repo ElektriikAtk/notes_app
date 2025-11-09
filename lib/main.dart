@@ -74,11 +74,12 @@ void createNote() {
     Widget gridBody = noteList.isNotEmpty
         ? 
         Stack(
+          
           children: [
-/*             GridView.count(
+            GridView.count(
               crossAxisCount: 4,
-              padding: EdgeInsets.all(12),
-              children: [   */                
+              padding: EdgeInsets.all(10),
+              children: [                  
                 for (var note in noteList) 
                   AnimatedContainer(
                     duration: Duration(milliseconds: 100),
@@ -97,8 +98,8 @@ void createNote() {
                         },
                         child: Text((noteList.indexOf(note).toString())),
                       ),                  
-/*                   ),
-              ], */
+                  ),
+              ],
             )
           ],
           )
